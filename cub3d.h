@@ -6,12 +6,12 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:41 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/10/30 16:39:09 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/10/31 12:08:12 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef CUB3D_H
+#define CUB3D_H
 
 # include <stdlib.h>
 # include <stdio.h>
@@ -19,6 +19,9 @@
 # include "libft/libft.h"
 # include "get_next_line/get_next_line.h"
 # include "minilibx-linux/mlx.h"
+
+# define WIDTH 800
+# define HEIGHT 600
 
 typedef struct s_game
 {
