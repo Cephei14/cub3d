@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:45 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/01 15:10:07 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/01 15:10:30 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,9 @@ int arg_check(char *str)
         ft_printf("Error\nFile name is too short.\n");
         return (FAIL);
     }
-    
     if (ft_strncmp(str + len - 4, ".cub", 4) == 0)
         return (SUCCESS);
-
-    ft_printf("Error\nOnly <.cub> files are supported.\n");
+	ft_printf("Error\nOnly <.cub> files are supported.\n");
     return (FAIL);
 }
 
