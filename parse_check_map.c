@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 16:07:18 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/01 23:41:07 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/01 23:41:55 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ int height_size(int fd, t_game *game)
 			cleanup(&game);
 			exit (1);
 		}
-		game->data[i][line_len]
+		game->data[i][line_len];
 	}
 	return i;
 }
