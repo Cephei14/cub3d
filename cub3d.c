@@ -6,44 +6,13 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:45 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/01 15:59:42 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/01 23:08:03 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int	wall_check(t_game *game, int n)
-{
-	int	i;
-	int	j;
 
-	i = 0;
-	while (game->data[0][i] || game->data[n][i])
-	{
-		if (game->data[0][i] != '1' || game->data[n][i] != '1')
-			return (ft_printf("Error\nMap is not enclosed by walls\n"), FAIL);
-		i++;
-	}
-	i = 1;
-	while(game->data[i] && i < n)
-	{
-		j = ft_strlen(game->data[i]);
-		if (game->data[i][0] != '1' || game->data[i] != '1')
-			return (ft_printf("Error\nMap is not enclosed by walls\n"), FAIL);
-		i++;
-	}
-	return (SUCCESS);
-}
-
-int map_check(t_game *game, char *str)
-{
-	int n;
-	
-	while(game->data[n])
-		n++;
-	wall_check(str, n);
-	return SUCCESS;
-}
 
 int arg_check(char *str)
 {
@@ -90,6 +59,9 @@ void exit_game(t_game *game)
 int parse_file_map_check(char *str, t_game *game)
 {
 	int fd;
+	
+	if ((fd = open(str, O_RDONLY)) < 0)
+		return (ft_printf("Error\nCould not open file\n"), FAIL);
 	
 	if(map_check(&game, str) == 1)
 		return FAIL;
