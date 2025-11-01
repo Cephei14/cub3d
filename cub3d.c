@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:45 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/01 15:10:30 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/01 15:55:21 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,12 +125,6 @@ void struct_init(t_game *game)
 	txtr_init_EW(&game);
 }
 
-int exit_game(t_game *game)
-{
-	mlx_destroy_window(game->mlx_ptr, game->win_ptr); //destroys the window
-	exit(0);
-}
-
 int textures(t_game *game)
 {
 	int width;
@@ -144,10 +138,24 @@ int ray_casting(t_game *game)
 	mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->img_ptr, 0, 0); //Adjusts (0, 0) of canvas with (0, 0) with the image
 }
 
+void free_data(t_game *game)
+{
+	
+}
+
 void exit_game(t_game *game)
 {
+	free_data(&game);
 	mlx_destroy_window(game->mlx_ptr, game->win_ptr); //destroys the window
 	exit(0);
+}
+
+int parse_file(char *str, t_game *game)
+{
+	int fd;
+	
+	if(map_check(&game, str) == 1)
+		return FAIL;
 }
 
 int main(int ac, char **av)
@@ -156,12 +164,20 @@ int main(int ac, char **av)
 	
 	if(ac != 2)
 	{
-		ft_printf("Use ./cub3d <map's path>\n");
+		ft_printf("Use ./cub3d <map's path> only <*.cub> files are supported\n");
 		return FAIL;
 	}
-	if(arg_check(av[1]) == 1 || map_check(&game, av[1]) == 1)
+	if(arg_check(av[1]) == 1)
 		return FAIL;
+		
 	struct_init(&game);
+	
+	if (parse_file(av[1], &game) == 1)
+	{
+		free_data(&game);
+		return FAIL;
+	}
+
 	if ((game.mlx_ptr = mlx_init()) == NULL) //connects the computer's graphics with my code
 		return FAIL;
 		
@@ -172,8 +188,8 @@ int main(int ac, char **av)
 		return FAIL;
 		
 	if ((game.img_pixel = mlx_get_data_addr(game.img_ptr, 
-		&game.bpp, &game.line_len, &game.endian)) == NULL) //you give it the canvas and other informations's adrresses so it fill those informations and return a pointer of the first pixel of the image
-		return FAIL;											//this one is for the screen
+		&game.bpp, &game.line_len, &game.endian)) == NULL) //It takes canvas's informations then it update them and returns a pointer of the first pixel of the image
+		return FAIL;											//For the screen
 		
 	if (textures(&game) == 1) //upload textures...
 		return FAIL;
@@ -182,6 +198,8 @@ int main(int ac, char **av)
 		return FAIL;
 	
 	mlx_loop(game.mlx_ptr); //infinite loop, it keep listening to event...
+	
 	exit_game(&game);
+	
 	return SUCCESS;
 }
