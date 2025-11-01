@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:41 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/01 15:19:36 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/01 15:59:10 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,10 @@
 # define HEIGHT 600
 # define SUCCESS 0
 # define FAIL 0
+
+void txtr_init_NS(t_game *game);
+void txtr_init_EW(t_game *game);
+void struct_init(t_game *game);
 
 typedef struct s_texture
 {
