@@ -6,86 +6,24 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 16:07:18 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/01 23:41:55 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/02 00:16:19 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int	NS_wall_check(t_game *game, int n)
+int NS_wall_check(char *line)
 {
 	int	i;
-	int	j;
-	int	k;
 
 	i = 0;
-	k = 0;
-	while(game->data[0][i] == ' ')
-		i++;
-	while(game->data[n][k] == ' ')
-		k++;
-	while (game->data[0][i] || game->data[n][k])
+	while(line[i])
 	{
-		if (game->data[0][i] != '1' || game->data[n][k] != '1')
-			return (printf("Error\nMap is not enclosed by walls\n"), FAIL);
+		if(line[i] != ' ' && line[i] != '1')
+			return FAIL;
 		i++;
 	}
-	i = 1;
-	while(game->data[i] && i < n)
-	{
-		j = ft_strlen(game->data[i]);
-		if (game->data[i][0] != '1' || game->data[i] != '1')
-			return (printf("Error\nMap is not enclosed by walls\n"), FAIL);
-		i++;
-	}
-	return (SUCCESS);
-}
-
-int map_check(t_game *game, char *str)
-{
-	int n;
-	
-	while(game->data[n])
-		n++;
-	NS_wall_check(str, n);
 	return SUCCESS;
-}
-
-int	get_line_length(const char *line)
-{
-	int	len;
-
-	if (!line)
-		return (0);
-	len = ft_strlen(line);
-	if (len > 0 && line[len - 1] == '\n')
-		return (len - 1);
-	return (len);
-}
-
-int	get_map_dimensions(int fd, t_game *game)
-{
-	char	*line;
-
-	line = get_next_line(fd);
-	if (!line)
-		return (printf("Error\nMap is empty\n"), FAIL);
-	game->width = get_line_length(line);
-	game->height = 0;
-	while (line)
-	{
-		game->height++;
-		if (get_line_length(line) != game->width)
-		{
-			free(line);
-			return (printf("Error\nMap is not rectangular\n"), FAIL);
-		}
-		free(line);
-		line = get_next_line(fd);
-	}
-	if (game->width == 0)
-		return (printf("Error\nMap contains empty lines\n"), FAIL);
-	return (SUCCESS);
 }
 
 int EW_wall_check(char *line)
@@ -99,7 +37,7 @@ int EW_wall_check(char *line)
 		return FAIL;
 	while(line[i])
 	{
-		while(line[i] == 1 || line[i] == 0)
+		while(line[i] == '1' || line[i] == '0')
 			i++;
 		if(line[i] == ' ')
 		{
@@ -115,38 +53,39 @@ int EW_wall_check(char *line)
 	return i;
 }
 
-int height_size(int fd, t_game *game)
+int parse_check(int fd, t_game *game)
 {
 	char *line;
-	int line_len;
 	int i;
 
 	line = get_next_line(fd);
 	if(!line)
 		return (printf("Empty file\n"), FAIL);
-	i = 0;
-	line_len = 0;
+	game->data = malloc(sizeof(char *) + 1);
+	game->data[0] = ft_strdup(line);
+	if ((NS_wall_check(game->data[0])) == FAIL)
+		return (printf("Map not surrounded by walls\n"), FAIL);
+	i = 1;
 	while(line = get_next_line(fd))
 	{
 		i++;
-		if ((line_len = EW_wall_check(line)) == FAIL)
-		{
-			printf("Map not surrounded by walls\n");
-			cleanup(&game);
-			exit (1);
-		}
-		game->data[i][line_len];
+		if ((EW_wall_check(line)) == FAIL)
+			return (printf("Map not surrounded by walls\n"), FAIL);
+		ft_realloc(game->data, i + 1);
+		game->data[i] = ft_strdup(line);
 	}
+	if ((NS_wall_check(game->data[i])) == FAIL)
+		return (printf("Map not surrounded by walls\n"), FAIL);
+	game->data[i + 1] = NULL;
 	return i;
 }
 
-int parse_file_map_check(char *str, t_game *game)
+int open_file_parse(char *str, t_game *game)
 {
 	int fd;
 	
 	if ((fd = open(str, O_RDONLY)) < 0)
-		return (printf("Error\nCould not open file\n"), FAIL);
-	game->height = height_size(fd, &game);
-	if(map_check(&game, str) == 1)
+		return (printf("Error : Could not open file\n"), FAIL);
+	if(parse_check(&game, str) == FAIL)
 		return FAIL;
 }
