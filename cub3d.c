@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:45 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/01 15:03:58 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/01 15:06:56 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ int textures(t_game *game)
 	int width;
 	int height;
 	
-	mlx_xpm_file_to_image();
+	mlx_xpm_file_to_image(game->mlx_ptr, "/wall/wall.xpm", width, height);
 }
 
 int ray_casting(t_game *game)
@@ -151,7 +151,7 @@ int main(int ac, char **av)
 		ft_printf("Use ./cub3d <map's path>\n");
 		return FAIL;
 	}
-	if(arg_check(av[1]) == 1 || map_check(av[1]) == 1)
+	if(arg_check(av[1]) == 1 || map_check(&game, av[1]) == 1)
 		return FAIL;
 	struct_init(&game);
 	if ((game.mlx_ptr = mlx_init()) == NULL) //connects the computer's graphics with my code
