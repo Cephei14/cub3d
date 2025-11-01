@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:41 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/01 16:06:01 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/01 23:39:58 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include <fcntl.h>
-# include "ft_printf/ft_printf.h"
 # include "libft/libft.h"
 # include "get_next_line/get_next_line.h"
 # include "minilibx-linux/mlx.h"
@@ -24,11 +23,12 @@
 # define WIDTH 800
 # define HEIGHT 600
 # define SUCCESS 0
-# define FAIL 0
+# define FAIL -1
 
 void txtr_init_NS(t_game *game);
 void txtr_init_EW(t_game *game);
 void struct_init(t_game *game);
+void cleanup(t_game *game);
 
 typedef struct s_texture
 {

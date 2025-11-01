@@ -1,22 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printchar.c                                     :+:      :+:    :+:   */
+/*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rafik <rafik@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 16:59:14 by rafik             #+#    #+#             */
-/*   Updated: 2024/11/20 11:47:25 by rafik            ###   ########.fr       */
+/*   Created: 2025/11/01 23:12:10 by rdhaibi           #+#    #+#             */
+/*   Updated: 2025/11/01 23:22:11 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../ft_printf.h"
+#include "cub3d.h"
 
-int	ft_printchar(va_list print_args)
+void cleanup(t_game *game)
 {
-	char	c;
-
-	c = (char)va_arg(print_args, int);
-	write(1, &c, 1);
-	return (1);
+	free_data(&game);
+	mlx_destroy_window(game->mlx_ptr, game->win_ptr); //destroys the window
+	exit(0);
 }
