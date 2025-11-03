@@ -248,7 +248,7 @@ int identifiers_and_grid(int fd, t_game *game)
 		else if (identifiers(line, flags, game, &grid_flag) == FAIL)
 			return(FAIL);
 	}
-	if ((S_wall_check(game->grid[i]), game->grid[i - 1]) == FAIL)
+	if ((S_wall_check(game->grid[i], game->grid[i - 1]) == FAIL))
 		return (printf("Map not surrounded by walls\n"), FAIL);
 	return (SUCCESS);
 }
