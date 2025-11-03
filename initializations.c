@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 15:58:25 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/01 15:58:34 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/03 22:09:26 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,11 @@ void struct_init(t_game *game)
 	game->win_ptr = NULL;
 	game->img_pixel = NULL;
 	game->img_ptr = NULL;
-	game->data = NULL;
+	game->grid = NULL;
+	game->no_path = NULL;
+    game->so_path = NULL;
+    game->ea_path = NULL;
+    game->we_path = NULL;
 	game->floor_color = 0;
 	game->ceiling_color = 0;
 	game->bpp = 0;
