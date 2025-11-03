@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:45 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/02 00:07:37 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/03 14:25:38 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int main(int ac, char **av)
 		
 	struct_init(&game);
 	
-	if (open_file_parse_(av[1], &game) == FAIL)
+	if (files_parse(av[1], &game) == FAIL)
 		cleanup(&game);
 
 	if ((game.mlx_ptr = mlx_init()) == NULL) //connects the computer's graphics with my code

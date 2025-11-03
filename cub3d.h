@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:41 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/02 00:04:04 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/03 17:22:15 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ typedef struct s_game
     void *win_ptr;    //Window's ID
     
     //map's data
-    char **data;      //Map's grid (<.cub> file)
+    char **grid;      //Map's grid (<.cub> file)
     char *no_path;    //File's path to textures .xpm
     char *so_path;    //File's path to textures .xpm
     char *ea_path;    //File's path to textures .xpm
