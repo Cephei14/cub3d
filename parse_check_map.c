@@ -40,34 +40,51 @@ int	S_wall_check(char *current, char *previous)
 		}
 		else if(current[i] == ' ')	
 		{
-			if(previous[i] != ' ' && previous[i] != '1')
+			if(i >= ft_strlen(previous) || (previous[i] != ' ' && previous[i] != '1'))
 				return(FAIL);
 		}
 		else
 			return(FAIL);
 		i++;
 	}
+	return(SUCCESS);
 }
 
 int	check_validity(int i, char *line, char p, int *player)
 {
 	if(line[i] == ' ')
 	{
-		if(line[i + 1] != ' ' && line[i + 1] != '1' && p != ' ' && p != '1' &&
-			line[i - 1] != ' ' && line[i - 1] != '1')
+		if (i == 0)
+		{
+			if (line[i + 1] != ' ' && line[i + 1] != '1') return(FAIL);
+			if (p != ' ' && p != '1') return (FAIL);
+		}
+		else if (line[i + 1] == '\0')
+		{
+			if (line[i - 1] != ' ' && line[i - 1] != '1') return(FAIL);
+			if (p != ' ' && p != '1') return (FAIL);
+		}
+		else if(line[i + 1] != ' ' && line[i + 1] != '1' && 
+				p != ' ' && p != '1' &&
+				line[i - 1] != ' ' && line[i - 1] != '1')
 			return(FAIL);
 	}
-	else if(line[i] == 'N' || line[i] == 'S' || line[i] == 'E' ||
-		line[i] == 'W')
+	else if(line[i] == 'N' || line[i] == 'S' || line[i] == 'E' || line[i] == 'W')
 	{
 		(*player)++;
-		if(line[i + 1] != '0' && line[i + 1] != '1' && p != '0' && p != '1' &&
+		if (i == 0 || line[i + 1] == '\0')
+			return (FAIL);
+		if(line[i + 1] != '0' && line[i + 1] != '1' && 
+			p != '0' && p != '1' &&
 			line[i - 1] != '0' && line[i - 1] != '1')
 			return(FAIL);
 	}
 	else if (line[i] == '0')
 	{
-		if(line[i + 1] != '0' && line[i + 1] != '1' && p != '0' && p != '1' &&
+		if (i == 0 || line[i + 1] == '\0')
+			return (FAIL);
+		if(line[i + 1] != '0' && line[i + 1] != '1' && 
+			p != '0' && p != '1' &&
 			line[i - 1] != '0' && line[i - 1] != '1')
 			return(FAIL);
 	}
@@ -75,6 +92,7 @@ int	check_validity(int i, char *line, char p, int *player)
 		return (SUCCESS);
 	else
 		return(FAIL);
+	return(SUCCESS);
 }
 
 int EW_wall_check(t_game *game, char *line, int *player, int previous_idx)
@@ -82,11 +100,18 @@ int EW_wall_check(t_game *game, char *line, int *player, int previous_idx)
 	int i;
 
 	i = 0;
-		return (printf("Invalid map\n"), FAIL);
 	while(line[i])
 	{
-		if (check_validity(i, line, game->grid[previous_idx][i], &player) == FAIL)
+		if (i >= ft_strlen(game->grid[previous_idx]))
+    	{
+    	    if (line[i] != ' ' && line[i] != '1')
+    	        return (printf("Invalid map data\n"), FAIL);
+            i++;
+            continue;
+    	}
+    	if (check_validity(i, line, game->grid[previous_idx][i], player) == FAIL)
 			return (printf("Invalid map data\n"), FAIL);
+		
 		if ((*player) > 1)
 			return (printf("Many players\n"), FAIL);
 		i++;
@@ -94,16 +119,21 @@ int EW_wall_check(t_game *game, char *line, int *player, int previous_idx)
 	return (SUCCESS);
 }
 
-int grid(t_game *game, char *line, int *i)
+int grid(t_game *game, char *line, int *i, int *player)
 {
-	int player;
-
-	ft_realloc(game->grid, (*i) + 1);
+	game->grid = ft_realloc(game->grid, (*i) + 1);
 	game->grid[*i] = ft_strdup(line);
-	if ((N_wall_check(game->grid[0])) == FAIL)
-		return (printf("Map not surrounded by walls\n"), FAIL);
-	if ((EW_wall_check(game, line, &player, (*i) - 1)) == FAIL)
-		return (printf("Map not surrounded by walls\n"), FAIL);
+	if(*i == 0)
+	{
+		if ((N_wall_check(game->grid[0])) == FAIL)
+			return (printf("Map not surrounded by walls\n"), FAIL);
+	}
+	else if ((*i > 0))
+	{
+		if((EW_wall_check(game, line, player, (*i) - 1)) == FAIL)
+			return (printf("Map not surrounded by walls\n"), FAIL);
+	}
+	return (SUCCESS);
 }
 
 int	create_trgb(int r, int g, int b)
@@ -157,7 +187,7 @@ int dup_check(int *arr)
 	int i;
 
 	i = 0;
-	while(arr[i])
+	while(i < 6)
 	{
 		if(arr[i] > 1)
 			return(printf("Duplicated identifier found\n"), FAIL);
@@ -207,62 +237,90 @@ int identifiers(char *line, int *arr, t_game *game, int *grid_flag)
 	char *id;
 	char *pth;
 
-	if(line[0] != 'N' && line[0] != 'S' && line[0] != 'E' && line[0] != 'W' && 
-		line[0] != 'C' && line[0] != 'F' && line[0] != '\n')
-		return (printf("Invalid identifier character\n"), FAIL);
+	if(line[0] == '\n')
+		return (SUCCESS);
 	splitted = ft_split(line, ' ');
-	id = splitted[0];
-	pth = splitted[1];
-	if (identifiers2(splitted, arr, game, &grid_flag) == FAIL)
-		return (free(splitted), FAIL);
+	if(!splitted || !splitted[0])
+		return (free_split(splitted), SUCCESS);
+if (ft_strncmp(splitted[0], "F", 2) == 0 || ft_strncmp(splitted[0], "C", 2) == 0)
+    {
+        if (!splitted[1])
+            return (printf("Error\nMissing color info\n"), FAIL);
+    }
+    else if (ft_strncmp(splitted[0], "NO", 3) == 0 || ft_strncmp(splitted[0], "SO", 3) == 0 ||
+		ft_strncmp(splitted[0], "EA", 3) == 0 || ft_strncmp(splitted[0], "WE", 3) == 0)
+    {
+        if (!splitted[1])
+            return (printf("Error\nMissing texture path\n"), FAIL);
+    }
+    if (identifiers2(splitted, arr, game, grid_flag) == FAIL)
+        return (free_split(splitted), FAIL);
+    free_split(splitted);
+    return (SUCCESS);
 }
 
-int check_first_line(char *line, int *arr, t_game *game)
-{
-	if(!line)
-		return (printf("Empty file\n"), FAIL);
-	else if (identifiers(line, arr, game, 0) == FAIL)
-		return (printf("Identifiers has a problem\n"), FAIL);
-	return (SUCCESS);
-}
-
-int identifiers_and_grid(int fd, t_game *game)
+int identifiers_and_grid(int fd, t_game *game, int *player)
 {
 	char *line;
 	int i;
 	int grid_flag;
 	int flags[6] = {0,0,0,0,0,0};
 
-	line = get_next_line(fd);
-	if (check_first_line(line, flags, game) == FAIL)
-		return (FAIL);
 	grid_flag = 0;
 	i = 0;
-	while(line = get_next_line(fd))
+	line = get_next_line(fd);
+	if (!line)
+		return (printf("Empty file\n"), FAIL);
+	while(line)
 	{
 		if(grid_flag)
 		{
-			grid(&game, line, &i);
+			grid(game, line, &i, player);
 			i++;
 		}
-		else if (identifiers(line, flags, game, &grid_flag) == FAIL)
-			return(FAIL);
+		else
+		{
+			if (identifiers(line, flags, game, &grid_flag) == FAIL)
+			{
+				free(line);
+				return(FAIL);
+			}
+			if (grid_flag)
+			{
+				grid(game, line, &i, player);
+				i++;
+			}
+		}
+		free(line);
+		line = get_next_line(fd);
 	}
-	if ((S_wall_check(game->grid[i], game->grid[i - 1]) == FAIL))
-		return (printf("Map not surrounded by walls\n"), FAIL);
+	if (*player == 0)
+		return (printf("No player\n"), FAIL);
+	if (i > 1)
+	{
+		if ((S_wall_check(game->grid[i - 1], game->grid[i - 2]) == FAIL))
+			return (printf("Map not surrounded by walls\n"), FAIL);
+	}
+	else if (i == 1)
+	{
+		if (N_wall_check(game->grid[0]) == FAIL)
+			return (printf("Map not surrounded by walls\n"), FAIL);
+	}
 	return (SUCCESS);
 }
 
 int files_parse(char *str, t_game *game)
 {
 	int fd;
+	int player;
 
+	player = 0;
 	if ((fd = open(str, O_RDONLY)) < 0)
 	{
 		close(fd);
 		return (printf("Error : Could not open file\n"), FAIL);
 	}
-	if(identifiers_and_grid(fd, game) == FAIL)
+	if(identifiers_and_grid(fd, game, &player) == FAIL)
 	{
 		close(fd);
 		cleanup(game);
