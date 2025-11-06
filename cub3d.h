@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:41 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/06 16:16:41 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/07 01:47:26 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,14 +48,11 @@ int parse_grid(t_game *game, char *line, int *i, int *player);
 int create_trgb(int r, int g, int b);
 int color_check(char *id, char *pth, int *arr, t_game *game);
 int dup_check(int *arr);
-void identifiers_end(char **splitted, int *grid_flag);
 int parse_identifiers_and_grid(int fd, t_game *game, int *player, int i);
 int parsing(char *str, t_game *game);
-int parse_identifiers2(char **splitted, int *arr, t_game *game,
-		int *grid_flag);
-int N_wall_check(char *line);
+int parse_identifiers2(char **splitted, int *arr, t_game *game);
+int NS_wall_check(char *line);
 int S_wall_check(char *current, char *previous);
-int NS_wall_check(int player, t_game *game, int i);
 int check_space(int i, char *line, char p);
 int check_player_or_floor(int i, char *line, char p);
 int check_validity(t_game *game, int i, char *line, char p, int *player, int y);

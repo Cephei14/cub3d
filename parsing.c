@@ -6,13 +6,24 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 16:07:18 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/06 16:33:35 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/07 01:57:40 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int parse_identifiers2(char **splitted, int *arr, t_game *game, int *grid_flag)
+int is_valid_char(char c, char *valid_chars)
+{
+	while (*valid_chars)
+	{
+		if (c == *valid_chars)
+			return (1);
+		valid_chars++;
+	}
+	return (0);
+}
+
+int parse_identifiers2(char **splitted, int *arr, t_game *game)
 {
 	if (splitted[1] == NULL)
     	return (printf("Error\nMissing data for identifier %s\n", splitted[0]), FAIL);
@@ -50,7 +61,21 @@ int parse_identifiers2(char **splitted, int *arr, t_game *game, int *grid_flag)
 		if (color_check(splitted[0], splitted[1], arr, game) == FAIL)
 			return (FAIL);
 	}
-    return (identifiers_end(splitted, grid_flag), SUCCESS);
+    return (SUCCESS);
+}
+
+int check_identifiers_nb(int *arr)
+{
+	int i;
+	
+	i = 0;
+	while (i < 5)
+	{
+	    if (arr[i] == 0)
+	        return (FAIL);
+	    i++;
+	}
+	return(SUCCESS);
 }
 
 int parse_identifiers(char *line, int *arr, t_game *game, int *grid_flag)
@@ -63,48 +88,52 @@ int parse_identifiers(char *line, int *arr, t_game *game, int *grid_flag)
 	splitted = ft_split(line, ' ');
 	if(!splitted || !splitted[0])
 		return (free_split(splitted), SUCCESS);
+	if ((line[0] == '1' || line[0] == '0' || line[0] == ' ') &&
+		(check_identifiers_nb(arr)) == SUCCESS)
+	{
+		*grid_flag = 1;
+		return (free_split(splitted), SUCCESS);
+	}
 	i = 0;
 	while (splitted[i])
 		i++;
-	if (i != 2)
+	if (i != 2 && *grid_flag)
 		return (free_split(splitted), printf("Error\nInvalid identifier format\n"), FAIL);
-    if (parse_identifiers2(splitted, arr, game, grid_flag) == FAIL)
-        return (free_split(splitted), FAIL);
-    free_split(splitted);
-    return (SUCCESS);
+    if ((parse_identifiers2(splitted, arr, game)) == FAIL)
+		return (free_split(splitted), FAIL);
+	return(free_split(splitted), SUCCESS);
 }
 
-
-int N_wall_check(char *line)
+int NS_wall_check(char *line)
 {
 	int	i;
 
 	i = 0;
-	while(line[i])
+	while(line[i] && line[i] != '\n')
 	{
 		if(line[i] != ' ' && line[i] != '1')
-			return FAIL;
+			return (FAIL);
 		i++;
 	}
 	return SUCCESS;
 }
 
-int	S_wall_check(char *current, char *previous)
+int	S_wall_check(char *current_line, char *previous_line)
 {
 	int	i;
 
 	i = 0;
-	while(current[i])
+	while(current_line[i])
 	{
-		if(current[i] == '1')
+		if(current_line[i] == '1')
 		{
 			i++;
 			continue;
 		}
-		else if(current[i] == ' ')	
+		else if(current_line[i] == ' ')	
 		{
-			if((size_t)i >= ft_strlen(previous) || (previous[i] != ' ' && previous[i] != '1'))
-				return(FAIL);
+			if(previous_line[i] != ' ' && previous_line[i] != '1')
+				return (FAIL);
 		}
 		else
 			return(FAIL);
@@ -113,43 +142,48 @@ int	S_wall_check(char *current, char *previous)
 	return(SUCCESS);
 }
 
-int NS_wall_check(int player, t_game *game, int i)
+int	special_wall_check(char *current_line, char *next_line)
+{
+	int	i;
+
+	i = 0;
+	while(current_line[i])
+	{
+		if(is_valid_char(current_line[i], "0NSEW") && (ft_strlen(next_line) < ft_strlen(current_line)))
+			return(FAIL);
+		i++;
+	}
+	return(SUCCESS);
+}
+
+int player_S_wall_check(int player, t_game *game, int i)
 {
 	if (player == 0)
-		return (printf("No player\n"), FAIL);
-	if (i > 1)
-	{
-		if ((S_wall_check(game->grid[i - 1], game->grid[i - 2]) == FAIL))
-			return (printf("Map not surrounded by walls\n"), FAIL);
-	}
-	else
-	{
-		if(N_wall_check(game->grid[0]) == FAIL)
-			return (printf("Map not surrounded by walls\n"), FAIL);
-	}
+		return (printf("No player start position in map\n"), FAIL);
+	if (player > 1)
+		return (printf("More than one player in map\n"), FAIL);
+	if (i < 3)
+		return (printf("Map is too small\n"), FAIL);
+	if (NS_wall_check(game->grid[i - 1]) == FAIL)
+		return (printf("Last line not surrounded by walls\n"), FAIL);
 	return (SUCCESS);
 }
 
-int	check_space(int i, char *line, char p)
+int	check_space(int i, char *line, char char_above)
 {
-	if (i == 0)
+	if(i != 0)
 	{
-		if (line[i + 1] != ' ' && line[i + 1] != '1')
-			return (FAIL);
-		if (p != ' ' && p != '1')
-			return (FAIL);
+		if (!is_valid_char(char_above, " 1") ||
+			!is_valid_char(line[i - 1], " 1") ||
+			!is_valid_char(line[i + 1], " 1"))
+			return (FAIL);	
 	}
-	else if (line[i + 1] == '\0')
+	else
 	{
-		if (line[i - 1] != ' ' && line[i - 1] != '1')
-			return (FAIL);
-		if (p != ' ' && p != '1')
-			return (FAIL);
+		if (!is_valid_char(char_above, " 1") ||
+			!is_valid_char(line[i + 1], " 1"))
+			return (FAIL);	
 	}
-	else if (line[i + 1] != ' ' && line[i + 1] != '1' &&
-				p != ' ' && p != '1' &&
-				line[i - 1] != ' ' && line[i - 1] != '1')
-		return (FAIL);
 	return (SUCCESS);
 }
 
@@ -167,22 +201,22 @@ int dup_check(int *arr)
 	return SUCCESS;
 }
 
-int	check_player_or_floor(int i, char *line, char p)
+int	check_player_or_floor(int i, char *line, char char_above)
 {
 	if (i == 0 || line[i + 1] == '\0')
 		return (FAIL);
-	if (line[i + 1] != '0' && line[i + 1] != '1' &&
-		p != '0' && p != '1' &&
-		line[i - 1] != '0' && line[i - 1] != '1')
+	if (!is_valid_char(char_above, "01NSEW") || \
+		!is_valid_char(line[i - 1], "01NSEW") || \
+		!is_valid_char(line[i + 1], "01NSEW"))
 		return (FAIL);
 	return (SUCCESS);
 }
 
-int	check_validity(t_game *game, int i, char *line, char p, int *player, int y)
+int	check_validity(t_game *game, int i, char *line, char char_above, int *player, int current_line)
 {
 	if (line[i] == ' ')
 	{
-		if (check_space(i, line, p) == FAIL)
+		if (check_space(i, line, char_above) == FAIL)
 			return (FAIL);
 	}
 	else if (line[i] == 'N' || line[i] == 'S' ||
@@ -190,15 +224,15 @@ int	check_validity(t_game *game, int i, char *line, char p, int *player, int y)
 	{
 		(*player)++;
 		game->start_x = i;
-		game->start_y = y;
+		game->start_y = current_line;
 		game->start_dir = line[i];
 		line[i] = '0';
-		if (check_player_or_floor(i, line, p) == FAIL)
+		if (check_player_or_floor(i, line, char_above) == FAIL)
 			return (FAIL);
     }
 	else if (line[i] == '0')
 	{
-		if (check_player_or_floor(i, line, p) == FAIL)
+		if (check_player_or_floor(i, line, char_above) == FAIL)
 			return (FAIL);
 	}
 	else if (line[i] == '1')
@@ -208,34 +242,28 @@ int	check_validity(t_game *game, int i, char *line, char p, int *player, int y)
 	return (SUCCESS);
 }
 
-int EW_wall_check(t_game *game, char *line, int *player, int previous_idx)
+int EW_wall_check(t_game *game, char *line, int *player, int line_above)
 {
+	char	char_above;
 	int		i;
-	char	p;
-	int		y;
+	int		current_line;
 
 	i = 0;
-	while(line[i])
+	if(line[0] == '\n')
+		*player = -1;
+	while(line[i] && line[i] != '\n')
 	{
-		if (previous_idx == -1)
+		if ((size_t)i >= ft_strlen(game->grid[line_above]))
 		{
-			p = '1';
-			y = 0;
+			if (line[i] != ' ' && line[i] != '1')
+				return (printf("Invalid map data1\n"), FAIL);
+			i++;
+			continue;
 		}
-		else
-		{
-			if ((size_t)i >= ft_strlen(game->grid[previous_idx]))
-			{
-				if (line[i] != ' ' && line[i] != '1')
-					return (printf("Invalid map data\n"), FAIL);
-				i++;
-				continue;
-			}
-			p = game->grid[previous_idx][i];
-			y = previous_idx + 1;
-		}
-		if (check_validity(game, i, line, p, player, y) == FAIL)
-			return (printf("Invalid map data\n"), FAIL);
+		current_line = line_above + 1;
+		char_above = game->grid[line_above][i];
+		if (check_validity(game, i, line, char_above, player, current_line) == FAIL)
+			return (printf("Invalid map data2\n"), FAIL);
 		if ((*player) > 1)
 			return (printf("Many players\n"), FAIL);
 		i++;
@@ -243,17 +271,40 @@ int EW_wall_check(t_game *game, char *line, int *player, int previous_idx)
 	return (SUCCESS);
 }
 
+
 int parse_grid(t_game *game, char *line, int *i, int *player)
 {
-	game->grid = ft_realloc(game->grid, (*i) + 2);
-	game->grid[*i] = ft_strdup(line);
+	char	**new_grid;
+	int		j;
 
-	if ((*i >= 0))
+	new_grid = malloc(sizeof(char *) * ((*i) + 2));
+	if (!new_grid)
+		return (FAIL); 
+	j = 0;
+	if (game->grid)
 	{
-		if((EW_wall_check(game, line, player, (*i) - 1)) == FAIL)
-			return (FAIL);
+		while (j < *i)
+		{
+			new_grid[j] = ft_strdup(game->grid[j]);
+			j++;
+		}
 	}
+	new_grid[j] = ft_strdup(line);
+	if (game->grid)
+		free(game->grid);
+	game->grid = new_grid;
+	if ((*i) == 0)
+    {
+        if (NS_wall_check(line) == FAIL)
+            return FAIL;
+    }
+    else if ((*i) > 0)
+    {
+        if((EW_wall_check(game, line, player, (*i) - 1)) == FAIL)
+            return (FAIL);
+    }
 	(*i)++;
+	game->grid[*i] = NULL;
 	return (SUCCESS);
 }
 
@@ -303,17 +354,11 @@ int color_check(char *id, char *pth, int *arr, t_game *game)
 	return (SUCCESS);
 }
 
-void identifiers_end(char **splitted, int *grid_flag)
-{
-	if(splitted[0][0] == '1' || splitted[0][0] == '0' || splitted[0][0] == ' ')
-		*grid_flag = 1;
-}
-
 int parse_identifiers_and_grid(int fd, t_game *game, int *player, int i)
 {
 	char *line;
 	int grid_flag;
-	int ident_flags[6] = {0,0,0,0,0,0};
+	int ident_arr[6] = {0,0,0,0,0,0};
 
 	grid_flag = 0;
 	line = get_next_line(fd);
@@ -321,27 +366,42 @@ int parse_identifiers_and_grid(int fd, t_game *game, int *player, int i)
 		return (printf("Empty file\n"), FAIL);
 	while(line)
 	{
+		if(*player == -1)
+		{
+			while((line = get_next_line(fd)))
+			{
+				if(line && line[0] != '\n')
+					return (printf("new line inside map\n"), FAIL);
+			}
+			break;
+		}
 		if(grid_flag)
-			parse_grid(game, line, &i, player);
+		{
+			if (parse_grid(game, line, &i, player) == FAIL)
+				return(free(line), FAIL);
+		}
 		else
 		{
-			if (parse_identifiers(line, ident_flags, game, &grid_flag) == FAIL)
+			if (parse_identifiers(line, ident_arr, game, &grid_flag) == FAIL)
 				return(free(line), FAIL);
-			if (grid_flag)
-				parse_grid(game, line, &i, player);
+			if(grid_flag)
+			{
+				if(parse_grid(game, line, &i, player) == FAIL)
+					return(free(line), FAIL);
+			}
 		}
-		free(line);
+		printf("i=%d ", i);
+		if(line)
+		{
+			printf("%s", line);
+			free(line);
+		}
 		line = get_next_line(fd);
 	}
-	if((NS_wall_check(*player, game, i)) == FAIL)
+	if((player_S_wall_check(*player, game, i)) == FAIL)
 		return(FAIL);
-	i = 0;
-	while (i < 6)
-	{
-	    if (ident_flags[i] == 0)
-	        return (printf("Error\nMissing identifier\n"), FAIL);
-	    i++;
-	}
+	if (check_identifiers_nb(ident_arr) == FAIL)
+		return(printf("Missing identifier"), FAIL);
 	return (SUCCESS);
 }
 
@@ -356,7 +416,7 @@ int parsing(char *str, t_game *game)
 	if(parse_identifiers_and_grid(fd, game, &player, 0) == FAIL)
 	{
 		close(fd);
-		return (cleanup(game), FAIL);
+		return (FAIL);
 	}
 	return (close(fd), SUCCESS);
 }
