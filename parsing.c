@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 16:07:18 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/07 02:08:39 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/07 02:15:24 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,10 +82,15 @@ int parse_identifiers(char *line, int *arr, t_game *game, int *grid_flag)
 {
 	char **splitted;
 	int i;
+	char *trimmed_line;
 
 	if(line[0] == '\n')
 		return (SUCCESS);
-	splitted = ft_split(line, ' ');
+	trimmed_line = ft_strtrim(line, " \n\t\v\f\r");
+	if (!trimmed_line)
+		return (printf("Error\nTrim failed\n"), FAIL);
+	splitted = ft_split(trimmed_line, ' ');
+	free(trimmed_line);
 	if(!splitted || !splitted[0])
 		return (free_split(splitted), SUCCESS);
 	if ((line[0] == '1' || line[0] == '0' || line[0] == ' ') &&
