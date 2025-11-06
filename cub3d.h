@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:41 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/06 12:56:58 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/06 13:46:41 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,35 @@
 # define SUCCESS 0
 # define FAIL -1
 
+typedef struct s_game	t_game;
+
 void txtr_init_NS(t_game *game);
 void txtr_init_EW(t_game *game);
 void struct_init(t_game *game);
-int parse_identifiers(char **splitted, int *arr, t_game *game, int *grid_flag);
+int parse_identifiers(char *line, int *arr, t_game *game, int *grid_flag);
 void cleanup(t_game *game);
+int arg_check(char *str);
+int textures(t_game *game);
+int ray_casting(t_game *game);
+void free_split(char **str);
+void free_grid(t_game *game);
+int parse_grid(t_game *game, char *line, int *i, int *player);
+int create_trgb(int r, int g, int b);
+int color_check(char *id, char *pth, int *arr, t_game *game);
+int dup_check(int *arr);
+void identifiers_end(char **splitted, int *grid_flag);
+int parse_identifiers_and_grid(int fd, t_game *game, int *player, int i);
+int parsing(char *str, t_game *game);
+int parse_identifiers2(char **splitted, int *arr, t_game *game,
+		int *grid_flag);
+int N_wall_check(char *line);
+int S_wall_check(char *current, char *previous);
+int NS_wall_check(int player, t_game *game, int i);
+int check_space(int i, char *line, char p);
+int check_player_or_floor(int i, char *line, char p);
+int check_validity(int i, char *line, char p, int *player);
+int EW_wall_check(t_game *game, char *line, int *player, int previous_idx);
+int files_parse(char *file, t_game *game);
 
 typedef struct s_texture
 {
