@@ -1,7 +1,7 @@
-NO ./wall/north.xpm 
-SO ./wall/south.xpm
-EA ./wall/east.xpm
-WE ./wall/west.xpm
+NO /wall/north.xpm 
+SO /wall/south.xpm
+EA /wall/east.xpm
+WE /wall/west.xpm
 F 220,100,0
 C 225,30,0
 

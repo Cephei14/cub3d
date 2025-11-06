@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 16:07:18 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/07 01:57:40 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/07 02:08:39 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -390,12 +390,8 @@ int parse_identifiers_and_grid(int fd, t_game *game, int *player, int i)
 					return(free(line), FAIL);
 			}
 		}
-		printf("i=%d ", i);
 		if(line)
-		{
-			printf("%s", line);
 			free(line);
-		}
 		line = get_next_line(fd);
 	}
 	if((player_S_wall_check(*player, game, i)) == FAIL)
