@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 23:12:10 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/06 15:41:43 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/06 16:06:34 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,5 +77,6 @@ void cleanup(t_game *game)
 int	handle_window_close(t_game *game)
 {
 	cleanup(game);
+	exit(0);
 	return (SUCCESS);
 }

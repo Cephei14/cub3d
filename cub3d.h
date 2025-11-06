@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:41 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/06 15:59:30 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/06 16:16:41 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 # include <stdio.h>
 # include <fcntl.h>
 # include <math.h>
-# include "../cub3d2/libft/libft.h"
-# include "../cub3d2/get_next_line/get_next_line.h"
-# include "../cub3d2/minilibx-linux/mlx.h"
+# include "libft/libft.h"
+# include "get_next_line/get_next_line.h"
+# include "minilibx-linux/mlx.h"
 
 # define WIDTH 800
 # define HEIGHT 600
@@ -33,6 +33,7 @@
 #define MOVE_SPEED 0.1
 #define ROT_SPEED 0.05
 
+typedef struct s_game	t_game;
 void txtr_init_NS(t_game *game);
 void txtr_init_EW(t_game *game);
 void struct_init(t_game *game);
@@ -62,6 +63,9 @@ int EW_wall_check(t_game *game, char *line, int *player, int previous_idx);
 void init_player(t_game *game);
 int	handle_keypress(int keycode, t_game *game);
 int	handle_window_close(t_game *game);
+int is_wall(t_game *game, double x, double y);
+int	handle_keypress(int keycode, t_game *game);
+
 
 typedef struct s_texture
 {

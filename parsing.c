@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 16:07:18 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/06 15:28:50 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/06 16:33:35 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int	S_wall_check(char *current, char *previous)
 		}
 		else if(current[i] == ' ')	
 		{
-			if(i >= ft_strlen(previous) || (previous[i] != ' ' && previous[i] != '1'))
+			if((size_t)i >= ft_strlen(previous) || (previous[i] != ' ' && previous[i] != '1'))
 				return(FAIL);
 		}
 		else
@@ -122,11 +122,12 @@ int NS_wall_check(int player, t_game *game, int i)
 		if ((S_wall_check(game->grid[i - 1], game->grid[i - 2]) == FAIL))
 			return (printf("Map not surrounded by walls\n"), FAIL);
 	}
-	else if (i == 1)
+	else
 	{
-		if (N_wall_check(game->grid[0]) == FAIL)
+		if(N_wall_check(game->grid[0]) == FAIL)
 			return (printf("Map not surrounded by walls\n"), FAIL);
 	}
+	return (SUCCESS);
 }
 
 int	check_space(int i, char *line, char p)
@@ -223,7 +224,7 @@ int EW_wall_check(t_game *game, char *line, int *player, int previous_idx)
 		}
 		else
 		{
-			if (i >= ft_strlen(game->grid[previous_idx]))
+			if ((size_t)i >= ft_strlen(game->grid[previous_idx]))
 			{
 				if (line[i] != ' ' && line[i] != '1')
 					return (printf("Invalid map data\n"), FAIL);
@@ -332,7 +333,7 @@ int parse_identifiers_and_grid(int fd, t_game *game, int *player, int i)
 		free(line);
 		line = get_next_line(fd);
 	}
-	if((NS_wall_check(player, game, i)) == FAIL)
+	if((NS_wall_check(*player, game, i)) == FAIL)
 		return(FAIL);
 	i = 0;
 	while (i < 6)

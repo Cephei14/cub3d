@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 15:58:25 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/06 15:15:10 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/06 16:36:05 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,8 @@ void struct_init(t_game *game)
 	game->dir_y = 0.0;
 	game->x_plane = 0.0;
 	game->y_plane = 0.0;
-	txtr_init_NS(&game);
-	txtr_init_EW(&game);
+	txtr_init_NS(game);
+	txtr_init_EW(game);
 }
 
 void init_player(t_game *game)

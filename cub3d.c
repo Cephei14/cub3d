@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:45 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/06 15:38:35 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/06 16:26:30 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	arg_check(char *str)
 		return (printf("Error\nFile name is too short.\n"), FAIL);
 	if (ft_strncmp(str + len - 4, ".cub", 4) == 0)
 		return (SUCCESS);
-	return (printf("Error\nOnly <.cub> files are supported.\n", FAIL));
+	return (printf("Error\nOnly <.cub> files are supported.\n"), FAIL);
 }
 
 int	textures(t_game *game)
@@ -58,9 +58,49 @@ int	close_game(t_game *game)
 	return (SUCCESS);
 }
 
+void	my_mlx_pixel_put(t_game *game, int x, int y, int color)
+{
+	char	*dst;
+
+	if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT)
+		return;
+	dst = game->img_pixel + (y * game->line_len + x * (game->bpp / 8));
+	*(unsigned int *)dst = color;
+}
+
 int ray_casting(t_game *game)
 {
-    mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->img_ptr, 0, 0);
+	int x;
+	int y;
+
+	// --- 1. DRAW FLOOR AND CEILING ---
+	y = 0;
+	while (y < HEIGHT)
+	{
+		x = 0;
+		while (x < WIDTH)
+		{
+			if (y < HEIGHT / 2) // Top half of screen
+				my_mlx_pixel_put(game, x, y, game->ceiling_color);
+			else // Bottom half of screen
+				my_mlx_pixel_put(game, x, y, game->floor_color);
+			x++;
+		}
+		y++;
+	}
+	
+	// --- 2. RAY-CASTING LOOP (We will build this next) ---
+	x = 0;
+	while (x < WIDTH)
+	{
+		// ... (Main logic will go here)
+		x++;
+	}
+
+	// --- 3. PUT IMAGE TO WINDOW ---
+	// This pushes your completed drawing to the screen
+	mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->img_ptr, 0, 0);
+	return (SUCCESS);
 }
 
 int	main(int ac, char **av)
@@ -74,7 +114,7 @@ int	main(int ac, char **av)
 	struct_init(&game);
 	if (parsing(av[1], &game) == FAIL)
 		return (cleanup(&game), FAIL);
-	if ((game.mlx_ptr = mlx_init()) == NULL)//connects the computer's graphics with my code
+	if ((game.mlx_ptr = mlx_init()) == NULL) //connects the computer's graphics with my code
 			return (cleanup(&game), FAIL);
 	if((game.win_ptr = mlx_new_window(game.mlx_ptr, WIDTH, HEIGHT, "Cube 3D")) == NULL) //opens a new window and give a title
 		return (cleanup(&game), FAIL);
@@ -86,10 +126,9 @@ int	main(int ac, char **av)
 	if (textures(&game) == FAIL) //upload textures...
         return (cleanup(&game), FAIL);
 	init_player(&game);
-	mlx_key_hook(game.win_ptr, handle_keypress, &game);
-	mlx_hook(game.win_ptr, 17, 0, handle_window_close, &game);
-	if (ray_casting(&game) == FAIL) //draw pixels
-		return (cleanup(&game), FAIL);
+	mlx_key_hook(game.win_ptr, handle_keypress, &game); //handle key hooks
+	mlx_hook(game.win_ptr, 17, (1L << 17), handle_window_close, &game); //for X button
+	mlx_loop_hook(game.mlx_ptr, ray_casting, &game); 
 	mlx_loop(game.mlx_ptr); //infinite loop, it keep listening to event...
 	return (SUCCESS);
 }
