@@ -6,12 +6,11 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:45 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/06 13:49:46 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/06 15:38:35 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-#include <X11/X.h>
 
 int	arg_check(char *str)
 {
@@ -35,9 +34,20 @@ int	textures(t_game *game)
 			game->ea_path, &game->east_tex.width, &game->east_tex.height);
 	game->west_tex.img_ptr = mlx_xpm_file_to_image(game->mlx_ptr,
 			game->we_path, &game->west_tex.width, &game->west_tex.height);
+
 	if (!game->north_tex.img_ptr || !game->south_tex.img_ptr
 		|| !game->east_tex.img_ptr || !game->west_tex.img_ptr)
+	{
 		return (printf("Error\nFailed to load textures\n"), FAIL);
+	}
+	game->north_tex.addr = mlx_get_data_addr(game->north_tex.img_ptr,
+		&game->north_tex.bpp, &game->north_tex.line_len, &game->north_tex.endian);
+	game->south_tex.addr = mlx_get_data_addr(game->south_tex.img_ptr,
+		&game->south_tex.bpp, &game->south_tex.line_len, &game->south_tex.endian);
+	game->east_tex.addr = mlx_get_data_addr(game->east_tex.img_ptr,
+		&game->east_tex.bpp, &game->east_tex.line_len, &game->east_tex.endian);
+	game->west_tex.addr = mlx_get_data_addr(game->west_tex.img_ptr,
+		&game->west_tex.bpp, &game->west_tex.line_len, &game->west_tex.endian);
 	return (SUCCESS);
 }
 
@@ -48,9 +58,9 @@ int	close_game(t_game *game)
 	return (SUCCESS);
 }
 
-int	ray_casting(t_game *game)
+int ray_casting(t_game *game)
 {
-	mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->img_ptr, 0, 0);
+    mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->img_ptr, 0, 0);
 }
 
 int	main(int ac, char **av)
@@ -62,10 +72,10 @@ int	main(int ac, char **av)
 	if(arg_check(av[1]) == FAIL)
 		return (FAIL);
 	struct_init(&game);
-	if (files_parse(av[1], &game) == FAIL)
+	if (parsing(av[1], &game) == FAIL)
 		return (cleanup(&game), FAIL);
 	if ((game.mlx_ptr = mlx_init()) == NULL)//connects the computer's graphics with my code
-		return (cleanup(&game), FAIL);
+			return (cleanup(&game), FAIL);
 	if((game.win_ptr = mlx_new_window(game.mlx_ptr, WIDTH, HEIGHT, "Cube 3D")) == NULL) //opens a new window and give a title
 		return (cleanup(&game), FAIL);
 	if ((game.img_ptr = mlx_new_image(game.mlx_ptr, WIDTH, HEIGHT)) == NULL) //creates a "canvas" to start drawing on it
@@ -74,8 +84,10 @@ int	main(int ac, char **av)
 		&game.bpp, &game.line_len, &game.endian)) == NULL) //It takes canvas's informations then it update them and returns a pointer of the first pixel of the image
 		return (cleanup(&game), FAIL);
 	if (textures(&game) == FAIL) //upload textures...
-		return (cleanup(&game), FAIL);
-	mlx_hook(game.win_ptr, DestroyNotify, StructureNotifyMask, close_game, &game);
+        return (cleanup(&game), FAIL);
+	init_player(&game);
+	mlx_key_hook(game.win_ptr, handle_keypress, &game);
+	mlx_hook(game.win_ptr, 17, 0, handle_window_close, &game);
 	if (ray_casting(&game) == FAIL) //draw pixels
 		return (cleanup(&game), FAIL);
 	mlx_loop(game.mlx_ptr); //infinite loop, it keep listening to event...

@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:41 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/06 13:46:41 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/06 15:59:30 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,22 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include <fcntl.h>
-# include "libft/libft.h"
-# include "get_next_line/get_next_line.h"
-# include "minilibx-linux/mlx.h"
+# include <math.h>
+# include "../cub3d2/libft/libft.h"
+# include "../cub3d2/get_next_line/get_next_line.h"
+# include "../cub3d2/minilibx-linux/mlx.h"
 
 # define WIDTH 800
 # define HEIGHT 600
 # define SUCCESS 0
 # define FAIL -1
-
-typedef struct s_game	t_game;
+# define KEY_W 119
+# define KEY_A 97
+# define KEY_S 115
+# define KEY_D 100
+# define KEY_ESC 65307
+#define MOVE_SPEED 0.1
+#define ROT_SPEED 0.05
 
 void txtr_init_NS(t_game *game);
 void txtr_init_EW(t_game *game);
@@ -51,9 +57,11 @@ int S_wall_check(char *current, char *previous);
 int NS_wall_check(int player, t_game *game, int i);
 int check_space(int i, char *line, char p);
 int check_player_or_floor(int i, char *line, char p);
-int check_validity(int i, char *line, char p, int *player);
+int check_validity(t_game *game, int i, char *line, char p, int *player, int y);
 int EW_wall_check(t_game *game, char *line, int *player, int previous_idx);
-int files_parse(char *file, t_game *game);
+void init_player(t_game *game);
+int	handle_keypress(int keycode, t_game *game);
+int	handle_window_close(t_game *game);
 
 typedef struct s_texture
 {
