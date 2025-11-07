@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:45 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/07 02:06:43 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/07 12:09:01 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,6 @@ int	textures(t_game *game)
 	return (SUCCESS);
 }
 
-int	close_game(t_game *game)
-{
-	cleanup(game);
-	exit(SUCCESS);
-	return (SUCCESS);
-}
-
 void	my_mlx_pixel_put(t_game *game, int x, int y, int color)
 {
 	char	*dst;
@@ -73,14 +66,13 @@ int ray_casting(t_game *game)
 	int x;
 	int y;
 
-	// --- 1. DRAW FLOOR AND CEILING ---
 	y = 0;
 	while (y < HEIGHT)
 	{
 		x = 0;
 		while (x < WIDTH)
 		{
-			if (y < HEIGHT / 2) // Top half of screen
+			if (y < HEIGHT / 2)
 				my_mlx_pixel_put(game, x, y, game->ceiling_color);
 			else // Bottom half of screen
 				my_mlx_pixel_put(game, x, y, game->floor_color);
@@ -88,8 +80,6 @@ int ray_casting(t_game *game)
 		}
 		y++;
 	}
-	
-	// --- 2. RAY-CASTING LOOP (We will build this next) ---
 	x = 0;
 	while (x < WIDTH)
 	{
@@ -97,7 +87,6 @@ int ray_casting(t_game *game)
 		x++;
 	}
 
-	// --- 3. PUT IMAGE TO WINDOW ---
 	// This pushes your completed drawing to the screen
 	mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->img_ptr, 0, 0);
 	return (SUCCESS);
@@ -125,6 +114,21 @@ int	main(int ac, char **av)
 		return (cleanup(&game), FAIL);
 	if (textures(&game) == FAIL) //upload textures...
         return (cleanup(&game), FAIL);
+	printf("NO %s\n", game.no_path);
+	printf("SO %s\n", game.so_path);
+	printf("EA %s\n", game.ea_path);
+	printf("WE %s\n", game.we_path);
+	printf("F %d\n", game.floor_color);
+	printf("C %d\n", game.ceiling_color);
+	for(int i = 0; game.grid[i]; i++)
+		printf("%s", game.grid[i]);
+	printf("\n\nstart_d = %c\n", game.start_dir);
+	printf("start_x = %d\n", game.start_x);
+	printf("start_y = %d\n", game.start_y);
+	printf("pos_x = %f\n", game.pos_x);
+	printf("pos_y = %f\n", game.pos_y);
+	printf("dir_x = %f\n", game.dir_x);
+	printf("dir_y = %f\n", game.dir_y);
 	init_player(&game);
 	mlx_key_hook(game.win_ptr, handle_keypress, &game); //handle key hooks
 	mlx_hook(game.win_ptr, 17, (1L << 17), handle_window_close, &game); //for X button
