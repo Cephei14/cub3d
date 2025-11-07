@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 15:58:25 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/06 16:36:05 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/07 13:22:21 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,19 +82,37 @@ void struct_init(t_game *game)
 void init_player(t_game *game)
 {
 	game->pos_x = game->start_x + 0.5;
-	game->pos_y = game->start_y + 0.5;
-
-	if (game->start_dir == 'N') {
+	game->pos_y = game->start_y + 0.5;//to prevent player 
+									//from starting inside a wall
+/*
+			-y
+			^
+			|
+			|
+	-x<-----|----->+x
+			|
+			|
+			v
+			+y
+*/
+	if (game->start_dir == 'N')
+	{
 		game->dir_x = 0.0;   game->dir_y = -1.0;
-		game->x_plane = 0.66; game->y_plane = 0.0;
-	} else if (game->start_dir == 'S') {
+		game->x_plane = 0.66; game->y_plane = 0.0; //camera plane : +0.66clockwise
+	}
+	else if (game->start_dir == 'S')
+	{
 		game->dir_x = 0.0;   game->dir_y = 1.0;
 		game->x_plane = -0.66; game->y_plane = 0.0;
-	} else if (game->start_dir == 'W') {
-		game->dir_x = -1.0;  game->dir_y = 0.0;
-		game->x_plane = 0.0;  game->y_plane = -0.66;
-	} else if (game->start_dir == 'E') {
+	}
+	else if (game->start_dir == 'E')
+	{
 		game->dir_x = 1.0;   game->dir_y = 0.0;
 		game->x_plane = 0.0;  game->y_plane = 0.66;
+	}
+	else if (game->start_dir == 'W')
+	{
+		game->dir_x = -1.0;  game->dir_y = 0.0;
+		game->x_plane = 0.0;  game->y_plane = -0.66;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:41 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/07 01:47:26 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/07 14:09:49 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,13 @@
 # define KEY_A 97
 # define KEY_S 115
 # define KEY_D 100
+# define KEY_LEFT 65361
+# define KEY_RIGHT 65363
+# define KEY_UP 65362
+# define KEY_DOWN 65364
 # define KEY_ESC 65307
-#define MOVE_SPEED 0.1
-#define ROT_SPEED 0.05
+#define MOVE_SPEED 0.5
+#define ROT_SPEED 0.1
 
 typedef struct s_game	t_game;
 void txtr_init_NS(t_game *game);

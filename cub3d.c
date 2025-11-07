@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:45 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/07 12:09:01 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/07 13:35:21 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,16 +63,17 @@ void	my_mlx_pixel_put(t_game *game, int x, int y, int color)
 
 int ray_casting(t_game *game)
 {
-	int x;
-	int y;
+	int		x;
+	int		y;
 
+	// --- 1. DRAW FLOOR AND CEILING (Your existing code) ---
 	y = 0;
 	while (y < HEIGHT)
 	{
 		x = 0;
 		while (x < WIDTH)
 		{
-			if (y < HEIGHT / 2)
+			if (y < HEIGHT / 2) // Top half of screen
 				my_mlx_pixel_put(game, x, y, game->ceiling_color);
 			else // Bottom half of screen
 				my_mlx_pixel_put(game, x, y, game->floor_color);
@@ -80,14 +81,113 @@ int ray_casting(t_game *game)
 		}
 		y++;
 	}
+	
+	// --- 2. RAY-CASTING LOOP (The new part) ---
 	x = 0;
 	while (x < WIDTH)
 	{
-		// ... (Main logic will go here)
-		x++;
+		// --- A. Setup Ray and Player Variables ---
+		// (All of these are 'double' for precision)
+		double cameraX = 2 * x / (double)WIDTH - 1; // x-coord on camera plane (-1 to 1)
+		double rayDirX = game->dir_x + game->x_plane * cameraX;
+		double rayDirY = game->dir_y + game->y_plane * cameraX;
+		
+		// Player's current grid square (int)
+		int mapX = (int)game->pos_x;
+		int mapY = (int)game->pos_y;
+
+		// Distance from one grid line to the next (X or Y)
+		// (Avoid division by zero if rayDir is 0)
+		double deltaDistX = (rayDirX == 0) ? 1e30 : fabs(1 / rayDirX);
+		double deltaDistY = (rayDirY == 0) ? 1e30 : fabs(1 / rayDirY);
+
+		// Distance from player to the *first* grid line
+		double sideDistX;
+		double sideDistY;
+
+		// Which direction to step in the grid? (+1 or -1)
+		int stepX;
+		int stepY;
+
+		// --- B. Calculate Step and Initial sideDist ---
+		if (rayDirX < 0)
+		{
+			stepX = -1;
+			sideDistX = (game->pos_x - mapX) * deltaDistX;
+		}
+		else
+		{
+			stepX = 1;
+			sideDistX = (mapX + 1.0 - game->pos_x) * deltaDistX;
+		}
+		if (rayDirY < 0)
+		{
+			stepY = -1;
+			sideDistY = (game->pos_y - mapY) * deltaDistY;
+		}
+		else
+		{
+			stepY = 1;
+			sideDistY = (mapY + 1.0 - game->pos_y) * deltaDistY;
+		}
+
+		// --- C. DDA (Digital Differential Analysis) Loop ---
+		int hit = 0;  // Was a wall hit?
+		int side; // Was it a N/S (1) or E/W (0) wall?
+
+		while (hit == 0)
+		{
+			// "Step" the ray to the next grid square
+			if (sideDistX < sideDistY)
+			{
+				sideDistX += deltaDistX;
+				mapX += stepX;
+				side = 0; // Hit an East/West wall
+			}
+			else
+			{
+				sideDistY += deltaDistY;
+				mapY += stepY;
+				side = 1; // Hit a North/South wall
+			}
+			// Check if the ray has hit a wall
+			if (game->grid[mapY][mapX] == '1')
+				hit = 1;
+		}
+
+		// --- D. Calculate Wall Height ---
+		double perpWallDist;
+		if (side == 0)
+			perpWallDist = (sideDistX - deltaDistX);
+		else
+			perpWallDist = (sideDistY - deltaDistY);
+
+		int lineHeight = (int)(HEIGHT / perpWallDist);
+
+		// Find the Y start/end for drawing this slice
+		int drawStart = -lineHeight / 2 + HEIGHT / 2;
+		if (drawStart < 0) drawStart = 0;
+		int drawEnd = lineHeight / 2 + HEIGHT / 2;
+		if (drawEnd >= HEIGHT) drawEnd = HEIGHT - 1;
+
+		// --- E. Draw the Wall Slice ---
+		int color;
+		if (side == 1) // N/S wall
+			color = 0x00FF0000; // Red
+		else // E/W wall
+			color = 0x0000FF00; // Green (different color for contrast)
+		
+		y = drawStart;
+		while (y < drawEnd)
+		{
+			my_mlx_pixel_put(game, x, y, color);
+			y++;
+		}
+		
+		x++; // Move to the next vertical stripe
 	}
 
-	// This pushes your completed drawing to the screen
+	// --- 3. PUT IMAGE TO WINDOW (Your existing code) ---
 	mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->img_ptr, 0, 0);
 	return (SUCCESS);
 }
@@ -114,21 +214,6 @@ int	main(int ac, char **av)
 		return (cleanup(&game), FAIL);
 	if (textures(&game) == FAIL) //upload textures...
         return (cleanup(&game), FAIL);
-	printf("NO %s\n", game.no_path);
-	printf("SO %s\n", game.so_path);
-	printf("EA %s\n", game.ea_path);
-	printf("WE %s\n", game.we_path);
-	printf("F %d\n", game.floor_color);
-	printf("C %d\n", game.ceiling_color);
-	for(int i = 0; game.grid[i]; i++)
-		printf("%s", game.grid[i]);
-	printf("\n\nstart_d = %c\n", game.start_dir);
-	printf("start_x = %d\n", game.start_x);
-	printf("start_y = %d\n", game.start_y);
-	printf("pos_x = %f\n", game.pos_x);
-	printf("pos_y = %f\n", game.pos_y);
-	printf("dir_x = %f\n", game.dir_x);
-	printf("dir_y = %f\n", game.dir_y);
 	init_player(&game);
 	mlx_key_hook(game.win_ptr, handle_keypress, &game); //handle key hooks
 	mlx_hook(game.win_ptr, 17, (1L << 17), handle_window_close, &game); //for X button
