@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:45 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/07 13:35:21 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/07 14:26:11 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ int ray_casting(t_game *game)
 	int		x;
 	int		y;
 
-	// --- 1. DRAW FLOOR AND CEILING (Your existing code) ---
 	y = 0;
 	while (y < HEIGHT)
 	{
@@ -82,22 +81,21 @@ int ray_casting(t_game *game)
 		y++;
 	}
 	
-	// --- 2. RAY-CASTING LOOP (The new part) ---
+	//RAY-Casting LOOP
 	x = 0;
 	while (x < WIDTH)
 	{
-		// --- A. Setup Ray and Player Variables ---
-		// (All of these are 'double' for precision)
+		// Setup Ray and Player Variables 
 		double cameraX = 2 * x / (double)WIDTH - 1; // x-coord on camera plane (-1 to 1)
 		double rayDirX = game->dir_x + game->x_plane * cameraX;
 		double rayDirY = game->dir_y + game->y_plane * cameraX;
 		
-		// Player's current grid square (int)
+		// Player's current grid square 
 		int mapX = (int)game->pos_x;
 		int mapY = (int)game->pos_y;
 
 		// Distance from one grid line to the next (X or Y)
-		// (Avoid division by zero if rayDir is 0)
+		// (no division by zero if rayDir is 0)
 		double deltaDistX = (rayDirX == 0) ? 1e30 : fabs(1 / rayDirX);
 		double deltaDistY = (rayDirY == 0) ? 1e30 : fabs(1 / rayDirY);
 
@@ -109,7 +107,7 @@ int ray_casting(t_game *game)
 		int stepX;
 		int stepY;
 
-		// --- B. Calculate Step and Initial sideDist ---
+		//Calculate Step and Initial sideDist
 		if (rayDirX < 0)
 		{
 			stepX = -1;
@@ -131,9 +129,9 @@ int ray_casting(t_game *game)
 			sideDistY = (mapY + 1.0 - game->pos_y) * deltaDistY;
 		}
 
-		// --- C. DDA (Digital Differential Analysis) Loop ---
-		int hit = 0;  // Was a wall hit?
-		int side; // Was it a N/S (1) or E/W (0) wall?
+		//DDA (Digital Differential Analysis) Loop
+		int hit = 0;  //Was a wall hit?
+		int side; //Was it a NS (1) or EW (0) wall?
 
 		while (hit == 0)
 		{
@@ -142,20 +140,20 @@ int ray_casting(t_game *game)
 			{
 				sideDistX += deltaDistX;
 				mapX += stepX;
-				side = 0; // Hit an East/West wall
+				side = 0; //Hit an EW wall
 			}
 			else
 			{
 				sideDistY += deltaDistY;
 				mapY += stepY;
-				side = 1; // Hit a North/South wall
+				side = 1; //Hit a NS wall
 			}
 			// Check if the ray has hit a wall
 			if (game->grid[mapY][mapX] == '1')
 				hit = 1;
 		}
 
-		// --- D. Calculate Wall Height ---
+		//Calculate Wall Height
 		double perpWallDist;
 		if (side == 0)
 			perpWallDist = (sideDistX - deltaDistX);
@@ -170,12 +168,12 @@ int ray_casting(t_game *game)
 		int drawEnd = lineHeight / 2 + HEIGHT / 2;
 		if (drawEnd >= HEIGHT) drawEnd = HEIGHT - 1;
 
-		// --- E. Draw the Wall Slice ---
+		// Draw the Wall Slice ---
 		int color;
-		if (side == 1) // N/S wall
+		if (side == 1) // NS wall
 			color = 0x00FF0000; // Red
 		else // E/W wall
-			color = 0x0000FF00; // Green (different color for contrast)
+			color = 0x0000FF00; // Green
 		
 		y = drawStart;
 		while (y < drawEnd)
@@ -187,7 +185,7 @@ int ray_casting(t_game *game)
 		x++; // Move to the next vertical stripe
 	}
 
-	// --- 3. PUT IMAGE TO WINDOW (Your existing code) ---
+	// PUT IMAGE TO WINDOW
 	mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->img_ptr, 0, 0);
 	return (SUCCESS);
 }
@@ -217,7 +215,7 @@ int	main(int ac, char **av)
 	init_player(&game);
 	mlx_key_hook(game.win_ptr, handle_keypress, &game); //handle key hooks
 	mlx_hook(game.win_ptr, 17, (1L << 17), handle_window_close, &game); //for X button
-	mlx_loop_hook(game.mlx_ptr, ray_casting, &game); 
+	mlx_loop_hook(game.mlx_ptr, ray_casting, &game); //It registers ray_castingas the "main loop."
 	mlx_loop(game.mlx_ptr); //infinite loop, it keep listening to event...
 	return (SUCCESS);
 }
