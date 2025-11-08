@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 23:12:10 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/07 11:56:04 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/07 16:41:12 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ void cleanup(t_game *game)
 		mlx_destroy_display(game->mlx_ptr);
 	if (game->mlx_ptr)
 		free(game->mlx_ptr);
+	get_next_line(-42);
 }
 
 int	close_game(t_game *game)

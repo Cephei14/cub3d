@@ -6,16 +6,32 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 15:35:33 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/07 14:04:20 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/07 15:57:56 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int is_wall(t_game *game, double x, double y)
+int	is_wall(t_game *game, double x, double y)
 {
-	if (game->grid[(int)y][(int)x] == '1')
+	int mapX;
+	int mapY;
+
+	mapX = (int)x;
+	mapY = (int)y;
+
+	if (mapY < 0 || mapY >= game->map_height)
 		return (1);
+
+	// Check if player is outside the map's width (X)
+	if (mapX < 0 || (size_t)mapX >= ft_strlen(game->grid[mapY]))
+		return (1); // Treat "out of bounds" as a wall
+	// --- END OF CHECK ---
+
+	// Now it's safe to check the grid
+	if (game->grid[mapY][mapX] == '1')
+		return (1);
+		
 	return (0);
 }
 

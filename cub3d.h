@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:41 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/07 14:09:49 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/07 15:51:47 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@
 # define KEY_UP 65362
 # define KEY_DOWN 65364
 # define KEY_ESC 65307
-#define MOVE_SPEED 0.5
-#define ROT_SPEED 0.1
+#define MOVE_SPEED 0.6
+#define ROT_SPEED 0.2
 
 typedef struct s_game	t_game;
 void txtr_init_NS(t_game *game);
@@ -93,6 +93,7 @@ typedef struct s_game
     char *we_path;    //File's path to textures .xpm
     int floor_color;  //Color as a single integer
     int ceiling_color;//Color as a single integer
+	int	map_height;
 
     //screen image's data
     void *img_ptr;    //Blank canvas's ID

@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 12:19:43 by rafik             #+#    #+#             */
-/*   Updated: 2025/06/06 18:54:19 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/07 16:41:35 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,13 @@ char	*get_next_line(int fd)
 	static char	*container;
 	char		*buffer;
 
+	if (fd == -42)
+	{
+		if (container)
+			free(container);
+		container = NULL;
+		return (NULL);
+	}
 	if (fd < 0 || fd > 1024 || BUFFER_SIZE <= 0)
 		return (NULL);
 	buffer = NULL;

@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 16:07:18 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/07 13:26:15 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/07 16:48:15 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,15 +276,38 @@ int EW_wall_check(t_game *game, char *line, int *player, int line_above)
 	return (SUCCESS);
 }
 
-
 int parse_grid(t_game *game, char *line, int *i, int *player)
 {
 	char	**new_grid;
 	int		j;
+	char	*trimmed_line;
+	int		p_len;
+	int		c_len;
+
+	// --- ADD THIS CHECK AT THE TOP ---
+	// If we're in the grid (i > 0) and we get a newline,
+	// it's the end of the map.
+	if ((*i) > 0 && line[0] == '\n')
+	{
+		*player = -1; // Set the flag
+		return (SUCCESS); // Return without adding this line to the grid
+	}
+	// --- END OF FIX ---
+
+	// Initialize p_len safely
+	p_len = 0;
+	if (game->grid && *i > 0)
+		p_len = ft_strlen(game->grid[(*i) - 1]);
+
+	trimmed_line = ft_strtrim(line, "\n");
+	if (!trimmed_line)
+		return (FAIL);
+
+	c_len = ft_strlen(trimmed_line); // Get length *after* trimming
 
 	new_grid = malloc(sizeof(char *) * ((*i) + 2));
 	if (!new_grid)
-		return (FAIL); 
+		return (free(trimmed_line), FAIL);
 	j = 0;
 	if (game->grid)
 	{
@@ -294,22 +317,36 @@ int parse_grid(t_game *game, char *line, int *i, int *player)
 			j++;
 		}
 	}
-	new_grid[j] = ft_strdup(line);
+	new_grid[j] = ft_strdup(trimmed_line);
 	if (game->grid)
-		free(game->grid);
+		free_split(game->grid);
 	game->grid = new_grid;
+
 	if ((*i) == 0)
-    {
-        if (NS_wall_check(line) == FAIL)
-            return FAIL;
-    }
-    else if ((*i) > 0)
-    {
-        if((EW_wall_check(game, line, player, (*i) - 1)) == FAIL)
-            return (FAIL);
-    }
+	{
+		if (NS_wall_check(trimmed_line) == FAIL)
+			return (free(trimmed_line), FAIL);
+	}
+	else if ((*i) > 0)
+	{
+		if((EW_wall_check(game, trimmed_line, player, (*i) - 1)) == FAIL)
+			return (free(trimmed_line), FAIL);
+		
+		// This check is now safe to run
+		if(p_len > c_len)
+		{
+			while (c_len < p_len) // Use c_len as the counter
+			{
+				// Added a check for ' ' (space)
+				if (game->grid[(*i) - 1][c_len] != '1' && game->grid[(*i) - 1][c_len] != ' ')
+					return (printf("Invalid map\n"), free(trimmed_line), FAIL);
+				c_len++;
+			}
+		}
+	}
 	(*i)++;
 	game->grid[*i] = NULL;
+	free(trimmed_line);
 	return (SUCCESS);
 }
 
@@ -403,6 +440,7 @@ int parse_identifiers_and_grid(int fd, t_game *game, int *player, int i)
 		return(FAIL);
 	if (check_identifiers_nb(ident_arr) == FAIL)
 		return(printf("Missing identifier"), FAIL);
+	game->map_height = i;
 	return (SUCCESS);
 }
 
