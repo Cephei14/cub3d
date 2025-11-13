@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:45 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/07 15:53:17 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/13 12:30:09 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ unsigned int	get_pixel_color(t_texture *texture, int x, int y)
 	pixel_addr = texture->addr + (y * texture->line_len + x * (texture->bpp / 8));
 	return (*(unsigned int *)pixel_addr);
 }
+
 int ray_casting(t_game *game)
 {
 	int		x;
