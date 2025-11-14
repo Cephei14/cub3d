@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 16:07:18 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/07 16:48:15 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/14 17:32:20 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ int parse_identifiers(char *line, int *arr, t_game *game, int *grid_flag)
 {
 	char **splitted;
 	int i;
+	int j;
 	char *trimmed_line;
 
 	if(line[0] == '\n')
@@ -91,6 +92,12 @@ int parse_identifiers(char *line, int *arr, t_game *game, int *grid_flag)
 		return (printf("Error\nTrim failed\n"), FAIL);
 	splitted = ft_split(trimmed_line, ' ');
 	free(trimmed_line);
+	j = 0;
+	while(splitted[j])
+		j++;
+	printf("j = %d\n", j);
+	if (j > 2)
+		return (free_split(splitted), printf("Error\nInvalid identifier number\n"), FAIL);
 	if(!splitted || !splitted[0])
 		return (free_split(splitted), SUCCESS);
 	if ((line[0] == '1' || line[0] == '0' || line[0] == ' ') &&
@@ -284,17 +291,11 @@ int parse_grid(t_game *game, char *line, int *i, int *player)
 	int		p_len;
 	int		c_len;
 
-	// --- ADD THIS CHECK AT THE TOP ---
-	// If we're in the grid (i > 0) and we get a newline,
-	// it's the end of the map.
 	if ((*i) > 0 && line[0] == '\n')
 	{
-		*player = -1; // Set the flag
-		return (SUCCESS); // Return without adding this line to the grid
+		*player = -1;
+		return (SUCCESS);
 	}
-	// --- END OF FIX ---
-
-	// Initialize p_len safely
 	p_len = 0;
 	if (game->grid && *i > 0)
 		p_len = ft_strlen(game->grid[(*i) - 1]);
