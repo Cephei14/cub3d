@@ -30,7 +30,7 @@ bonus : $(BONUS_OBJ)
 	ar -rc $(NAME) $(BONUS_OBJ)
 	
 clean :
-	rm -f $(SRC_OBJ) $(BONUS_OBJ)
+	rm -f $(SRC_OBJ) $(BONUS_OBJ) $(NAME)
 
 fclean : clean
 	rm -f $(NAME)
