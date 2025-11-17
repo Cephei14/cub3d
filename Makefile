@@ -7,12 +7,23 @@ RM = rm -f
 LIBFT_DIR = ./libft
 MLX_DIR   = ./minilibx-linux
 
-SRC_FILES = cub3d.c \
+SRC_FILES = cub3D.c \
 			parser.c \
+			parser2.c \
+			parser3.c \
+			parser4.c \
+			parser5.c \
+			parser6.c \
+			parse_textr.c \
 			initializations.c \
+			txtr_init.c \
 			cleanup.c \
+			frees.c \
+			ray_casting.c \
+			ray_casting2.c \
 			render_hook.c \
 			./get_next_line/get_next_line.c \
+			./get_next_line/get_next_line2.c \
 			./get_next_line/get_next_line_utils.c
 
 OBJS = $(SRC_FILES:.c=.o)

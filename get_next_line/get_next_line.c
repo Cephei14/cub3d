@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 12:19:43 by rafik             #+#    #+#             */
-/*   Updated: 2025/11/07 16:41:35 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/17 13:21:59 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,12 +95,7 @@ char	*get_next_line(int fd)
 	char		*buffer;
 
 	if (fd == -42)
-	{
-		if (container)
-			free(container);
-		container = NULL;
-		return (NULL);
-	}
+		return (handle_bonus_free(&container));
 	if (fd < 0 || fd > 1024 || BUFFER_SIZE <= 0)
 		return (NULL);
 	buffer = NULL;
@@ -108,14 +103,5 @@ char	*get_next_line(int fd)
 		return (buffer);
 	if (read_file(fd, &container, &buffer))
 		return (buffer);
-	if (container && *container)
-	{
-		buffer = ft_strdup(container);
-		free(container);
-		container = NULL;
-		return (buffer);
-	}
-	free(container);
-	container = NULL;
-	return (NULL);
+	return (handle_eof(&container));
 }

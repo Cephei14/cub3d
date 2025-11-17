@@ -1,37 +1,52 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cleanup.c                                          :+:      :+:    :+:   */
+/*   parser6.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/01 23:12:10 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/17 14:43:17 by rdhaibi          ###   ########.fr       */
+/*   Created: 2025/11/01 16:07:18 by rdhaibi           #+#    #+#             */
+/*   Updated: 2025/11/17 18:26:09 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3D.h"
 
-void	cleanup(t_game *game)
+int	is_all_digits(char *str)
 {
-	if (!game)
-		return ;
-	free_grid(game);
-	free_paths_and_textures(game);
-	free_mlx(game);
-	get_next_line(-42);
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (ft_isdigit(str[i]) == 0)
+			return (0);
+		i++;
+	}
+	return (1);
 }
 
-int	close_game(t_game *game)
+int	ns_line_check(char *line)
 {
-	cleanup(game);
-	exit(SUCCESS);
+	int	i;
+
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] != '1' && line[i] != ' ')
+			return (FAIL);
+		i++;
+	}
 	return (SUCCESS);
 }
 
-int	handle_window_close(t_game *game)
+int	is_valid_char(char c, char *valid_chars)
 {
-	cleanup(game);
-	exit(0);
-	return (SUCCESS);
+	while (*valid_chars)
+	{
+		if (c == *valid_chars)
+			return (1);
+		valid_chars++;
+	}
+	return (0);
 }

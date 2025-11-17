@@ -6,61 +6,23 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 15:58:25 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/07 13:22:21 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/17 18:32:35 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "cub3D.h"
 
-void txtr_init_NS(t_game *game)
-{
-	game->north_tex.img_ptr = NULL;
-	game->north_tex.addr = NULL;
-	game->north_tex.width = 0;
-	game->north_tex.height = 0;
-	game->north_tex.bpp = 0;
-	game->north_tex.line_len = 0;
-	game->north_tex.endian = 0;
-	
-	game->south_tex.img_ptr = NULL;
-	game->south_tex.addr = NULL;
-	game->south_tex.width = 0;
-	game->south_tex.height = 0;
-	game->south_tex.bpp = 0;
-	game->south_tex.line_len = 0;
-	game->south_tex.endian = 0;
-}
-void txtr_init_EW(t_game *game)
-{
-	game->east_tex.img_ptr = NULL;
-	game->east_tex.addr = NULL;
-	game->east_tex.width = 0;
-	game->east_tex.height = 0;
-	game->east_tex.bpp = 0;
-	game->east_tex.line_len = 0;
-	game->east_tex.endian = 0;
-	
-	game->west_tex.img_ptr = NULL;
-	game->west_tex.addr = NULL;
-	game->west_tex.width = 0;
-	game->west_tex.height = 0;
-	game->west_tex.bpp = 0;
-	game->west_tex.line_len = 0;
-	game->west_tex.endian = 0;
-	
-}
-
-void struct_init(t_game *game)
+void	struct_init(t_game *game)
 {
 	game->mlx_ptr = NULL;
 	game->win_ptr = NULL;
 	game->img_pixel = NULL;
 	game->img_ptr = NULL;
-	game->grid = NULL;
+	game->g = NULL;
 	game->no_path = NULL;
-    game->so_path = NULL;
-    game->ea_path = NULL;
-    game->we_path = NULL;
+	game->so_path = NULL;
+	game->ea_path = NULL;
+	game->we_path = NULL;
 	game->floor_color = 0;
 	game->ceiling_color = 0;
 	game->bpp = 0;
@@ -75,44 +37,52 @@ void struct_init(t_game *game)
 	game->dir_y = 0.0;
 	game->x_plane = 0.0;
 	game->y_plane = 0.0;
-	txtr_init_NS(game);
-	txtr_init_EW(game);
+	txtr_init_ns(game);
+	txtr_init_ew(game);
 }
 
-void init_player(t_game *game)
+void	init_player_ns(t_game *game)
 {
-	game->pos_x = game->start_x + 0.5;
-	game->pos_y = game->start_y + 0.5;//to prevent player 
-									//from starting inside a wall
-/*
-			-y
-			^
-			|
-			|
-	-x<-----|----->+x
-			|
-			|
-			v
-			+y
-*/
 	if (game->start_dir == 'N')
 	{
-		game->dir_x = 0.0;   game->dir_y = -1.0;
-		game->x_plane = 0.66; game->y_plane = 0.0; //camera plane : +0.66clockwise
+		game->dir_x = 0.0;
+		game->dir_y = -1.0;
+		game->x_plane = 0.66;
+		game->y_plane = 0.0;
 	}
-	else if (game->start_dir == 'S')
+	else
 	{
-		game->dir_x = 0.0;   game->dir_y = 1.0;
-		game->x_plane = -0.66; game->y_plane = 0.0;
+		game->dir_x = 0.0;
+		game->dir_y = 1.0;
+		game->x_plane = -0.66;
+		game->y_plane = 0.0;
 	}
-	else if (game->start_dir == 'E')
+}
+
+void	init_player_ew(t_game *game)
+{
+	if (game->start_dir == 'E')
 	{
-		game->dir_x = 1.0;   game->dir_y = 0.0;
-		game->x_plane = 0.0;  game->y_plane = 0.66;
+		game->dir_x = 1.0;
+		game->dir_y = 0.0;
+		game->x_plane = 0.0;
+		game->y_plane = 0.66;
 	}
-	else if (game->start_dir == 'W')
+	else
 	{
-		game->dir_x = -1.0;  game->dir_y = 0.0;
-		game->x_plane = 0.0;  game->y_plane = -0.66;
+		game->dir_x = -1.0;
+		game->dir_y = 0.0;
+		game->x_plane = 0.0;
+		game->y_plane = -0.66;
 	}
+}
+
+void	init_player(t_game *game)
+{
+	game->pos_x = game->start_x + 0.5;
+	game->pos_y = game->start_y + 0.5;
+	if (game->start_dir == 'N' || game->start_dir == 'S')
+		init_player_ns(game);
+	else if (game->start_dir == 'E' || game->start_dir == 'W')
+		init_player_ew(game);
 }

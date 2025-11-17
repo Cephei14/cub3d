@@ -1,37 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cleanup.c                                          :+:      :+:    :+:   */
+/*   get_next_line2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/01 23:12:10 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/17 14:43:17 by rdhaibi          ###   ########.fr       */
+/*   Created: 2024/12/31 12:19:34 by rafik             #+#    #+#             */
+/*   Updated: 2025/11/17 13:22:12 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3D.h"
+#include "get_next_line.h"
+#include "../libft/libft.h"
 
-void	cleanup(t_game *game)
+char	*handle_bonus_free(char **container)
 {
-	if (!game)
-		return ;
-	free_grid(game);
-	free_paths_and_textures(game);
-	free_mlx(game);
-	get_next_line(-42);
+	if (*container)
+		free(*container);
+	*container = NULL;
+	return (NULL);
 }
 
-int	close_game(t_game *game)
+char	*handle_eof(char **container)
 {
-	cleanup(game);
-	exit(SUCCESS);
-	return (SUCCESS);
-}
+	char	*buffer;
 
-int	handle_window_close(t_game *game)
-{
-	cleanup(game);
-	exit(0);
-	return (SUCCESS);
+	if (!*container || !**container)
+	{
+		free(*container);
+		*container = NULL;
+		return (NULL);
+	}
+	buffer = ft_strdup(*container);
+	free(*container);
+	*container = NULL;
+	return (buffer);
 }
