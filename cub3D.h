@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 15:50:41 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/17 18:34:18 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/17 18:48:41 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,12 +78,7 @@ int		dup_check(int *arr);
 int		parse_identifiers_and_grid(int fd, t_game *game, int *player, int i);
 int		parsing(char *str, t_game *game);
 int		parse_identifiers2(char **splitted, int *arr, t_game *game);
-int		ns_wall_check(char *line);
 int		s_wall_check(char *current, char *previous);
-int		check_space(int i, char *line, char p);
-int		check_player_or_floor(int i, char *line, char p);
-int		check_validity(t_game *game, int i, char *line, char p,int *player, int y);
-int		ew_wall_check(t_game *game, char *line, int *player, int previous_idx);
 int		handle_keypress(int keycode, t_game *game);
 int		handle_window_close(t_game *game);
 int		is_all_digits(char *str);
