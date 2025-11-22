@@ -6,7 +6,7 @@
 /*   By: rdhaibi <rdhaibi@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 15:58:25 by rdhaibi           #+#    #+#             */
-/*   Updated: 2025/11/17 15:35:08 by rdhaibi          ###   ########.fr       */
+/*   Updated: 2025/11/21 16:37:05 by rdhaibi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	txtr_init_ns(t_game *game)
 void	txtr_init_ew(t_game *game)
 {
 	game->mlx_ptr = mlx_init();
-	game->win_ptr = mlx_new_window(game->mlx_ptr, WIDTH, HEIGHT, "Cube 3D");
+	game->win_ptr = mlx_new_window(game->mlx_ptr, WIDTH, HEIGHT, "Cub3D");
 	game->img_ptr = mlx_new_image(game->mlx_ptr, WIDTH, HEIGHT);
 	game->img_pixel = mlx_get_data_addr(game->img_ptr,
 			&game->bpp, &game->line_len, &game->endian);
